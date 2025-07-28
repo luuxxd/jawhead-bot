@@ -362,3 +362,95 @@ exports.readRestrictedMessageTypes = () => {
     event: "eventMessage",
   });
 };
+
+exports.activateAntiLinkGp = (remoteJid) => {
+  const db = exports.readGroupRestrictions();
+  if (!db[remoteJid]) db[remoteJid] = {};
+  db[remoteJid]["antilinkgp"] = true;
+  exports.saveGroupRestrictions(db);
+};
+
+exports.deactivateAntiLinkGp = (remoteJid) => {
+  const db = exports.readGroupRestrictions();
+  if (!db[remoteJid]) return;
+  db[remoteJid]["antilinkgp"] = false;
+  exports.saveGroupRestrictions(db);
+};
+
+exports.isActiveAntiLinkGp = (remoteJid) => {
+  const db = exports.readGroupRestrictions();
+  return !!db[remoteJid]?.["antilinkgp"];
+};
+
+exports.updateBotPrefix = (newPrefix) => {
+  const settingsPath = path.resolve(__dirname, "..", "settings.json");
+  const settingsRaw = fs.readFileSync(settingsPath, "utf8");
+  const settings = JSON.parse(settingsRaw);
+
+  const oldPrefix = settings.bot.prefix;
+  settings.bot.prefix = newPrefix;
+
+  fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2), "utf8");
+
+  return { oldPrefix, newPrefix };
+};
+
+const fsPromises = require("fs").promises;
+
+// --- FUNÇÃO ASSÍNCRONA PARA ALTERAR O PREFIXO ---
+exports.updateBotPrefixAsync = async (newPrefix) => {
+  const settingsPath = path.resolve(__dirname, "..", "settings.json");
+  const settingsRaw = await fsPromises.readFile(settingsPath, "utf8");
+  const settings = JSON.parse(settingsRaw);
+
+  const oldPrefix = settings.bot.prefix;
+  if (oldPrefix === newPrefix) {
+    return { oldPrefix, newPrefix, changed: false };
+  }
+
+  settings.bot.prefix = newPrefix;
+
+  await fsPromises.writeFile(settingsPath, JSON.stringify(settings, null, 2), "utf8");
+
+  return { oldPrefix, newPrefix, changed: true };
+};
+
+// --- FUNÇÕES DO SISTEMA DE ADVERTÊNCIAS ---
+
+const WARNS_DATABASE_FILE = "warns";
+
+// Lê o banco de dados de advertências
+exports.readWarns = () => {
+  return readJSON(WARNS_DATABASE_FILE, {});
+};
+
+// Salva o banco de dados de advertências
+exports.saveWarns = (data) => {
+  writeJSON(WARNS_DATABASE_FILE, data, {});
+};
+
+// Pega as advertências de um usuário específico
+exports.getWarns = (userJid) => {
+  const db = exports.readWarns();
+  return db[userJid] || []; // Retorna uma lista vazia se o usuário não tiver warns
+};
+
+// Adiciona uma nova advertência a um usuário
+exports.addWarn = (userJid, reason) => {
+  const db = exports.readWarns();
+  if (!db[userJid]) {
+    db[userJid] = [];
+  }
+  db[userJid].push({ reason, date: new Date().toISOString() });
+  exports.saveWarns(db);
+  return db[userJid]; // Retorna a lista atualizada de advertências
+};
+
+// Limpa todas as advertências de um usuário
+exports.clearWarns = (userJid) => {
+  const db = exports.readWarns();
+  if (db[userJid]) {
+    delete db[userJid];
+    exports.saveWarns(db);
+  }
+};

@@ -3,7 +3,8 @@
  *
  * @author Dev Gui
  */
-const { PREFIX, OWNER_NUMBER, OWNER_LID } = require("../config");
+const { OWNER_NUMBER, OWNER_LID } = require("../config");
+const { bot: { prefix: PREFIX } } = require("../settings.json");
 const { compareUserJidWithOtherNumber } = require("../utils");
 
 exports.verifyPrefix = (prefix) => PREFIX === prefix;
@@ -116,4 +117,12 @@ exports.checkPermission = async ({ type, socket, userJid, remoteJid }) => {
   } catch (error) {
     return false;
   }
+};
+
+// Função que detecta APENAS links de grupo do WhatsApp
+exports.isWhatsAppGroupLink = (text) => {
+  const regex = new RegExp(
+    /(https?:\/\/)?chat\.whatsapp\.com\/(?:invite\/)?([a-zA-Z0-9_-]{22})/i
+  );
+  return regex.test(text);
 };

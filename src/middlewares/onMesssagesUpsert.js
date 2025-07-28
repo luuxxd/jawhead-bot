@@ -1,9 +1,3 @@
-/**
- * Evento chamado quando uma mensagem
- * é enviada para o grupo do WhatsApp
- *
- * @author Dev Gui
- */
 const {
   isAtLeastMinutesInPast,
   GROUP_PARTICIPANT_ADD,
@@ -25,25 +19,20 @@ exports.onMessagesUpsert = async ({ socket, messages, startProcess }) => {
   }
 
   for (const webMessage of messages) {
-    if (DEVELOPER_MODE) {
-      infoLog(
-        `\n\n⪨========== [ MENSAGEM RECEBIDA ] ==========⪩ \n\n${JSON.stringify(
-          messages,
-          null,
-          2
-        )}`
-      );
-    }
-
     try {
-      const timestamp = webMessage.messageTimestamp;
-
-      if (webMessage?.message) {
-        messageHandler(socket, webMessage);
+      if (DEVELOPER_MODE) {
+        infoLog(`\n\n⪨========== [ MENSAGEM RECEBIDA ] ==========⪩ \n\n${JSON.stringify(messages, null, 2)}`);
       }
 
-      if (isAtLeastMinutesInPast(timestamp)) {
+      if (isAtLeastMinutesInPast(webMessage.messageTimestamp)) {
         continue;
+      }
+
+      if (webMessage?.message) {
+        const messageWasDeleted = await messageHandler(socket, webMessage);
+        if (messageWasDeleted) {
+          continue; // Se a mensagem foi deletada, pula para a próxima e não processa como comando
+        }
       }
 
       if (isAddOrLeave.includes(webMessage.messageStubType)) {
@@ -67,20 +56,12 @@ exports.onMessagesUpsert = async ({ socket, messages, startProcess }) => {
           continue;
         }
 
-        if (
-          checkIfMemberIsMuted(
-            commonFunctions.remoteJid,
-            commonFunctions.userJid
-          )
-        ) {
+        if (checkIfMemberIsMuted(commonFunctions.remoteJid, commonFunctions.userJid)) {
           try {
             await commonFunctions.deleteMessage(webMessage.key);
           } catch (error) {
-            errorLog(
-              `Erro ao deletar mensagem de membro silenciado, provavelmente eu não sou administrador do grupo! ${error.message}`
-            );
+            errorLog(`Erro ao deletar mensagem de membro silenciado: ${error.message}`);
           }
-
           return;
         }
 
@@ -90,14 +71,11 @@ exports.onMessagesUpsert = async ({ socket, messages, startProcess }) => {
       if (badMacHandler.handleError(error, "message-processing")) {
         continue;
       }
-
       if (badMacHandler.isSessionError(error)) {
         errorLog(`Erro de sessão ao processar mensagem: ${error.message}`);
         continue;
       }
-
       errorLog(`Erro ao processar mensagem: ${error.message}`);
-
       continue;
     }
   }

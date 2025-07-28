@@ -1,0 +1,13 @@
+{
+  "bot": {
+    "name": "Jawhead 🦍",
+    "prefix": "!",
+    "presence": "online"
+  },
+  "owner": {
+    "name": "luxd",
+    "numbers": [
+      "5551996247940"
+    ]
+  }
+}

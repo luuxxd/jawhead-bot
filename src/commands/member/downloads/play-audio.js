@@ -2,15 +2,26 @@ const { PREFIX } = require(`${BASE_DIR}/config`);
 const { play } = require(`${BASE_DIR}/services/spider-x-api`);
 const { InvalidParameterError } = require(`${BASE_DIR}/errors`);
 
+// --- NOSSA NOVA FUNÇÃO AJUDADORA ---
+/**
+ * Converte segundos para o formato MM:SS
+ * @param {number} seconds - O total de segundos
+ * @returns {string} - A duração formatada
+ */
+function formatDuration(seconds) {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  // Adiciona um zero à esquerda se os segundos forem menores que 10 (ex: 3:05)
+  const formattedSeconds = remainingSeconds.toString().padStart(2, '0');
+  return `${minutes}:${formattedSeconds}`;
+}
+
 module.exports = {
   name: "play-audio",
   description: "Faço o download de músicas",
   commands: ["play-audio", "play", "pa"],
   usage: `${PREFIX}play-audio MC Hariel`,
-  /**
-   * @param {CommandHandleProps} props
-   * @returns {Promise<void>}
-   */
+
   handle: async ({
     sendAudioFromURL,
     sendImageFromURL,
@@ -27,7 +38,7 @@ module.exports = {
 
     if (fullArgs.includes("http://") || fullArgs.includes("https://")) {
       throw new InvalidParameterError(
-        `Você não pode usar links para baixar músicas! Use ${PREFIX}yt-mp3 link`
+        `Você não pode usar links para baixar músicas. Use ${PREFIX}yt-mp3 link.`
       );
     }
 
@@ -37,19 +48,18 @@ module.exports = {
       const data = await play("audio", fullArgs);
 
       if (!data) {
-        await sendErrorReply("Nenhum resultado encontrado!");
+        await sendErrorReply("Nenhum resultado encontrado.");
         return;
       }
+
+      const duration = formatDuration(data.total_duration_in_seconds);
 
       await sendSuccessReact();
 
       await sendImageFromURL(
         data.thumbnail,
-        `*Título*: ${data.title}
-        
-*Descrição*: ${data.description}
-*Duração em segundos*: ${data.total_duration_in_seconds}
-*Canal*: ${data.channel.name}`
+        `
+*Título*: ${data.channel.name} - ${data.title}\n*Duração*: ${duration}`
       );
 
       await sendAudioFromURL(data.url);
