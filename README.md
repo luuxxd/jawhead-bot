@@ -1,4 +1,4 @@
-# 🤖 Takeshi Bot
+# Jawhead Bot 🦍
 
 <div align="center">
     <img src="./assets/images/takeshi-bot.png" width="500">
@@ -147,10 +147,10 @@ npm start
 exports.PREFIX = "/";
 
 // Emoji do bot (mude se preferir).
-exports.BOT_EMOJI = "🤖";
+exports.BOT_EMOJI = "";
 
 // Nome do bot (mude se preferir).
-exports.BOT_NAME = "Takeshi Bot";
+exports.BOT_NAME = "Jawhead";
 
 // Número do bot. Coloque o número do bot
 // (apenas números, exatamente como está no WhatsApp).
