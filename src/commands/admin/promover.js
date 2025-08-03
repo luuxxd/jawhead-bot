@@ -6,13 +6,13 @@ module.exports = {
   name: "promover",
   description: "Promove um usuário a administrador do grupo",
   commands: ["promover", "promove", "promote", "add-adm"],
-  usage: `${PREFIX}promover @usuario`,
+  usage: `${PREFIX}promover @usuario ou respondendo a uma mensagem`,
   /**
    * @param {CommandHandleProps} props
    * @returns {Promise<void>}
    */
   handle: async ({
-    args,
+    webMessage,
     remoteJid,
     socket,
     sendWarningReply,
@@ -20,22 +20,26 @@ module.exports = {
     sendErrorReply,
   }) => {
     if (!isGroup(remoteJid)) {
-      return sendWarningReply("Este comando só pode ser usado em grupo !");
+      return sendWarningReply("Esse comando só pode ser usado em grupo!");
     }
 
-    if (!args.length || !args[0]) {
-      return sendWarningReply("Por favor, marque um usuário para promover.");
-    }
+    const contextInfo = webMessage.message?.extendedTextMessage?.contextInfo;
+    const targetJid = contextInfo?.mentionedJid?.[0] || contextInfo?.participant;
 
-    const userId = args[0].replace("@", "") + "@s.whatsapp.net";
+    if (!targetJid) {
+      return sendWarningReply("Por favor, marque um usuário ou responda a uma mensagem para promover.");
+    }
 
     try {
-      await socket.groupParticipantsUpdate(remoteJid, [userId], "promote");
-      await sendSuccessReply("Usuário promovido com sucesso!");
+      await socket.groupParticipantsUpdate(remoteJid, [targetJid], "promote");
+
+      const targetName = `@${targetJid.split('@')[0]}`;
+      await socket.sendMessage(remoteJid, { text: `✔️ ${targetName} agora é um *administrador*.`, mentions: [targetJid] });
+
     } catch (error) {
-      errorLog(`Erro ao promover usuário: ${error.message}`);
+      errorLog(`Erro ao promover o usuário: ${error.message}`);
       await sendErrorReply(
-        "Ocorreu um erro ao tentar promover o usuário. Eu preciso ser administrador do grupo para promover outros usuários!"
+        "Para realizar este comando eu primeiro preciso ser administrador."
       );
     }
   },

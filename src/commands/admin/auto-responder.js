@@ -40,6 +40,6 @@ module.exports = {
 
     const context = autoResponder ? "ativado" : "desativado";
 
-    await sendReply(`Recurso de auto-responder ${context} com sucesso!`);
+    await sendReply(`✔️ Recurso de auto-responder ${context} com sucesso.`);
   },
 };

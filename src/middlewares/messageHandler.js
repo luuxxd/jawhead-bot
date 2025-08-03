@@ -1,4 +1,4 @@
-const { getContent, compareUserJidWithOtherNumber } = require("../utils");
+const { getContent, compareUserJidWithOtherNumber, getGreeting } = require("../utils");
 const { errorLog, infoLog } = require("../utils/logger");
 const {
   readGroupRestrictions,
@@ -10,10 +10,10 @@ const { isWhatsAppGroupLink, isAdmin } = require("../middlewares");
 exports.messageHandler = async (socket, webMessage) => {
   try {
     const { remoteJid, fromMe } = webMessage.key;
-    const userJid = webMessage.key.participant;
+    const userJid = webMessage.key.participant || webMessage.key.remoteJid;
 
     if (fromMe || !userJid) {
-      return;
+      return false;
     }
 
     const messageText =
@@ -22,14 +22,21 @@ exports.messageHandler = async (socket, webMessage) => {
       "";
 
     const configuredPrefix = require("../settings.json").bot.prefix || PREFIX;
+
+    if (messageText.trim().toLowerCase() === 'prefixo') {
+        const replyText = `Meu prefixo é > *${configuredPrefix}*`;
+        await socket.sendMessage(remoteJid, { text: replyText }, { quoted: webMessage });
+        return true;
+    }
+
     if (messageText.trim() === configuredPrefix) {
-      const replyText = `Olá @${userJid.split("@")[0]}, para mais informações use (${configuredPrefix})menu para acessar meus comandos.`;
+      const replyText = `${getGreeting()}, @${userJid.split("@")[0]}!\n\nSe quiser acessar meus comandos, use ${configuredPrefix}menu.`;
       await socket.sendMessage(remoteJid, { text: replyText, mentions: [userJid] }, { quoted: webMessage });
-      return;
+      return true;
     }
 
     if (!remoteJid.includes("@g.us")) {
-      return;
+      return false;
     }
 
     const isUserAdmin = await isAdmin({ remoteJid, userJid, socket });
@@ -38,33 +45,27 @@ exports.messageHandler = async (socket, webMessage) => {
       userJid === OWNER_LID;
 
     if (isBotOwner || isUserAdmin) {
-      return;
+      return false;
     }
 
     if (isActiveAntiLinkGp(remoteJid)) {
       if (isWhatsAppGroupLink(messageText)) {
-        infoLog(
-          `[AntiLinkGP] Link de grupo detectado de ${userJid}. Iniciando protocolo de segurança...`
-        );
-
+        infoLog(`[AntiLinkGP] Link de grupo detectado de ${userJid}. Iniciando protocolo...`);
         await socket.groupSettingUpdate(remoteJid, 'announcement');
-        await socket.sendMessage(remoteJid, { text: `Link detectado, removendo beta...` });
+        await socket.sendMessage(remoteJid, { text: `Link de grupo detectado, removendo beta...` });
         await socket.groupParticipantsUpdate(remoteJid, [userJid], "remove");
-
         setTimeout(async () => {
           await socket.groupSettingUpdate(remoteJid, 'not_announcement');
-          await socket.sendMessage(remoteJid, { text: `Beta removido, o grupo foi aberto novamente.` });
-          infoLog(`[AntiLinkGP] Protocolo finalizado. Grupo ${remoteJid} reaberto.`);
+          await socket.sendMessage(remoteJid, { text: `Segurança restaurada, beta removido.` });
         }, 5000);
-
-        return;
+        return true;
       }
     }
 
     const groupRestrictions = readGroupRestrictions();
     const thisGroupRestrictions = groupRestrictions[remoteJid];
 
-    if (!thisGroupRestrictions) return;
+    if (!thisGroupRestrictions) return false;
 
     const messageType = Object.keys(thisGroupRestrictions).find((type) =>
       getContent(webMessage, type.replace("anti-", ""))
@@ -72,8 +73,11 @@ exports.messageHandler = async (socket, webMessage) => {
 
     if (messageType && thisGroupRestrictions[messageType]) {
       await socket.sendMessage(remoteJid, { delete: webMessage.key });
+      return true;
     }
   } catch (error) {
     errorLog(`Erro no messageHandler: ${error.message}`);
   }
+
+  return false;
 };

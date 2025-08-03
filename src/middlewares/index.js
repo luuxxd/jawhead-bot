@@ -1,44 +1,23 @@
-/**
- * Interceptadores diversos.
- *
- * @author Dev Gui
- */
 const { OWNER_NUMBER, OWNER_LID } = require("../config");
-const { bot: { prefix: PREFIX } } = require("../settings.json");
-const { compareUserJidWithOtherNumber } = require("../utils");
+const settings = require("../settings.json");
+const { compareUserJidWithOtherNumber, onlyNumbers } = require("../utils");
 
-exports.verifyPrefix = (prefix) => PREFIX === prefix;
+exports.verifyPrefix = (prefix) => settings.bot.prefix === prefix;
 exports.hasTypeAndCommand = ({ type, command }) => !!type && !!command;
 
 exports.isLink = (text) => {
   const cleanText = text.trim();
-
-  if (/^\d+$/.test(cleanText)) {
+  if (/^\d+$/.test(cleanText) || /[.]{2,3}/.test(cleanText)) {
     return false;
   }
-
-  if (/[.]{2,3}/.test(cleanText)) {
-    return false;
-  }
-
   try {
     const url = new URL(cleanText);
     return url.protocol === "http:" || url.protocol === "https:";
   } catch (error) {
     try {
       const url = new URL("https://" + cleanText);
-
-      const originalHostname = cleanText
-        .split("/")[0]
-        .split("?")[0]
-        .split("#")[0];
-
-      return (
-        url.hostname.includes(".") &&
-        originalHostname.includes(".") &&
-        url.hostname.length > 4 &&
-        !/^\d+$/.test(originalHostname)
-      );
+      const originalHostname = cleanText.split("/")[0].split("?")[0].split("#")[0];
+      return (url.hostname.includes(".") && originalHostname.includes(".") && url.hostname.length > 4 && !/^\d+$/.test(originalHostname));
     } catch (error) {
       return false;
     }
@@ -46,83 +25,40 @@ exports.isLink = (text) => {
 };
 
 exports.isAdmin = async ({ remoteJid, userJid, socket }) => {
-  const { participants, owner } = await socket.groupMetadata(remoteJid);
-
-  const participant = participants.find(
-    (participant) => participant.id === userJid
-  );
-
-  if (!participant) {
+  if (!remoteJid.endsWith("@g.us")) return false;
+  try {
+    const groupMetadata = await socket.groupMetadata(remoteJid);
+    const participants = groupMetadata.participants;
+    const user = participants.find(p => p.id === userJid);
+    return user?.admin === 'admin' || user?.admin === 'superadmin';
+  } catch (e) {
     return false;
   }
-
-  const isOwner =
-    participant.id === owner ||
-    participant.admin === "superadmin" ||
-    compareUserJidWithOtherNumber({
-      userJid: participant.id,
-      otherNumber: OWNER_NUMBER,
-    });
-
-  const isAdmin = participant.admin === "admin";
-
-  return isOwner || isAdmin;
 };
 
-exports.isBotOwner = ({ userJid, isLid }) => {
-  if (isLid) {
-    return userJid === OWNER_LID;
-  }
-
-  return compareUserJidWithOtherNumber({
-    userJid: userJid,
-    otherNumber: OWNER_NUMBER,
-  });
+// A nova função isBotOwner
+exports.isBotOwner = ({ userJid }) => {
+  if (!userJid) return false;
+  const ownerNumbers = settings.owner.numbers || [];
+  return ownerNumbers.some(ownerNumber => 
+    compareUserJidWithOtherNumber({ userJid, otherNumber: ownerNumber })
+  );
 };
 
 exports.checkPermission = async ({ type, socket, userJid, remoteJid }) => {
   if (type === "member") {
     return true;
   }
-
-  try {
-    const { participants, owner } = await socket.groupMetadata(remoteJid);
-
-    const participant = participants.find(
-      (participant) => participant.id === userJid
-    );
-
-    if (!participant) {
-      return false;
-    }
-
-    const isOwner =
-      participant.id === owner || participant.admin === "superadmin";
-
-    const isAdmin = participant.admin === "admin";
-
-    const isBotOwner =
-      compareUserJidWithOtherNumber({ userJid, otherNumber: OWNER_NUMBER }) ||
-      userJid === OWNER_LID;
-
-    if (type === "admin") {
-      return isOwner || isAdmin || isBotOwner;
-    }
-
-    if (type === "owner") {
-      return isOwner || isBotOwner;
-    }
-
-    return false;
-  } catch (error) {
-    return false;
+  if (exports.isBotOwner({ userJid })) {
+    return true; // Dono sempre tem permissão
   }
+  if (type === "admin") {
+    return await exports.isAdmin({ remoteJid, userJid, socket });
+  }
+  return false;
 };
 
-// Função que detecta APENAS links de grupo do WhatsApp
 exports.isWhatsAppGroupLink = (text) => {
-  const regex = new RegExp(
-    /(https?:\/\/)?chat\.whatsapp\.com\/(?:invite\/)?([a-zA-Z0-9_-]{22})/i
-  );
+  const regex = new RegExp(/(https?:\/\/)?chat\.whatsapp\.com\/(?:invite\/)?([a-zA-Z0-9_-]{22})/i);
   return regex.test(text);
 };

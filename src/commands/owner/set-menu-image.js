@@ -53,7 +53,7 @@ module.exports = {
 
       fs.renameSync(tempPath, menuImagePath);
 
-      await sendSuccessReply("Imagem do menu atulizada com sucesso !");
+      await sendSuccessReply("Imagem do menu atulizada com sucesso!");
     } catch (error) {
       errorLog(`Erro ao alterar imagem do menu:  ${error}`);
       await sendErrorReply(

@@ -55,6 +55,6 @@ module.exports = {
 
     const status = antiProductOn ? "ativado" : "desativado";
 
-    await sendSuccessReply(`Anti-product ${status} com sucesso!`);
+    await sendSuccessReply(`✔️ Anti-Product ${status} com sucesso.`);
   },
 };

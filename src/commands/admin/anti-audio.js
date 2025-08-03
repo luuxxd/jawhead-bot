@@ -55,6 +55,6 @@ module.exports = {
 
     const status = antiAudioOn ? "ativado" : "desativado";
 
-    await sendSuccessReply(`Anti-audio ${status} com sucesso!`);
+    await sendSuccessReply(`✔️ Sistema Anti-Audio ${status} com sucesso.`);
   },
 };

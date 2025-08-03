@@ -66,7 +66,7 @@ module.exports = {
     const context = onlyAdminOn ? "ativado" : "desativado";
 
     await sendReply(
-      `Recurso de somente admins usarem meus comandos ${context} com sucesso!`
+      `✔️ Recurso de somente admins usarem meus comandos ${context} com sucesso.`
     );
   },
 };

@@ -23,7 +23,7 @@ module.exports = {
       }
 
       await sendSuccessReact();
-      await sendReply(`🦍✅ Prefixo alterado para *"${newPrefix}"* com sucesso.\n\n⚠️ Por favor, me reinicie para que a alteração tenha efeito.`);
+      await sendReply(`🦍✔️ Prefixo alterado para *"${newPrefix}"* com sucesso.\n\n⚠️ Por favor, me reinicie para que a alteração tenha efeito.`);
 
     } catch (error) {
       console.error("ERRO GRAVE no comando setprefix:", error);

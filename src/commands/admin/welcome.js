@@ -61,6 +61,6 @@ module.exports = {
 
     const context = welcome ? "ativado" : "desativado";
 
-    await sendReply(`Recurso de boas-vindas ${context} com sucesso!`);
+    await sendReply(`✔️ Recurso de boas-vindas ${context} com sucesso.`);
   },
 };

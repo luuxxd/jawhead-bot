@@ -22,7 +22,7 @@ module.exports = {
   handle: async ({ socket, remoteJid, sendSuccessReply, sendErrorReply }) => {
     try {
       await socket.groupSettingUpdate(remoteJid, "not_announcement");
-      await sendSuccessReply("Grupo aberto com sucesso!");
+      await sendSuccessReply("Grupo aberto para todos os membros.");
     } catch (error) {
       await sendErrorReply(
         "Para abrir o grupo, eu preciso ser administrador dele!"

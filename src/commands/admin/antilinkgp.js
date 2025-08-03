@@ -41,6 +41,6 @@ module.exports = {
     await sendSuccessReact();
 
     const status = shouldActivate ? "ativado" : "desativado";
-    await sendReply(`✔️ O anti-link de grupo foi ${status} com sucesso!`);
+    await sendReply(`✔️ Sistema Anti-Link de grupo ${status} com sucesso.`);
   },
 };

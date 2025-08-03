@@ -32,7 +32,7 @@ module.exports = {
           imageMessage: {
             url: "https://mmg.whatsapp.net/o1/v/t62.7118-24/f1/m234/up-oil-image-e1bbfe2b-334b-4c5d-b716-d80edff29301?ccb=9-4&oh=01_Q5AaID0uZoxsi9v2I7KJZEgeJ7IVkFPZkt2yeYf6ps0IWG2g&oe=66E7130B&_nc_sid=000000&mms3=true",
             mimetype: "image/png",
-            caption: `${BOT_EMOJI} Limpo ✅️`,
+            caption: `✔️ Limpo`,
             fileSha256: "YVuPx9PoIxL0Oc3xsUc3n3uhttmVYlqUV97LKKvIjL8=",
             fileLength: "999999999",
             height: 10000000000000000,

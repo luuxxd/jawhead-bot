@@ -12,7 +12,6 @@
  * a menos que você saiba
  * o que está fazendo.
  *
- * @author Dev Gui
  */
 const path = require("node:path");
 const { question, onlyNumbers } = require("./utils");

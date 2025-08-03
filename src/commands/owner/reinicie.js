@@ -9,7 +9,7 @@ module.exports = {
 
   handle: async ({ sendReply, sendSuccessReact }) => {
     await sendSuccessReact();
-    await sendReply("🦍✅ Reiniciando...");
+    await sendReply("🦍✔️ Reiniciando...");
 
     try {
     

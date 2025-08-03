@@ -55,6 +55,6 @@ module.exports = {
 
     const status = antiVideoOn ? "ativado" : "desativado";
 
-    await sendSuccessReply(`Anti-video ${status} com sucesso!`);
+    await sendSuccessReply(`✔️ Sistema Anti-Video ${status} com sucesso.`);
   },
 };

@@ -49,12 +49,12 @@ module.exports = {
       await socket.groupUpdateSubject(remoteJid, fullArgs);
 
       await sendSuccessReply(
-        `Nome do grupo alterado com sucesso!\n\n*Antigo*: ${oldName}\n\n*Novo*: ${fullArgs}`
+        `✔️ Nome do grupo alterado com sucesso!\n\n*Antigo*: ${oldName}\n\n*Novo*: ${fullArgs}`
       );
     } catch (error) {
       errorLog("Error ao alterar o nome do grupo:", error);
       await sendErrorReply(
-        "Falha ao alterar o nome do grupo. Verifique se tenho permissão de administrador."
+        "❗ Falha ao alterar o nome do grupo. Verifique se tenho permissão de administrador."
       );
     }
   },

@@ -1,8 +1,20 @@
 {
   "120363418971697315@g.us": {
     "antilinkgp": true,
-    "anti-video": true,
+    "anti-video": false,
     "anti-sticker": true,
     "anti-product": true
+  },
+  "120363401374124908@g.us": {
+    "antivisu": true
+  },
+  "120363420791664320@g.us": {
+    "antifake": true
+  },
+  "120363423039798227@g.us": {
+    "antifake": true
+  },
+  "120363211359499226@g.us": {
+    "antifake": true
   }
 }

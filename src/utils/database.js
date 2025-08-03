@@ -2,7 +2,6 @@
  * Funções úteis para trabalhar
  * com dados.
  *
- * @author Dev Gui
  */
 const path = require("node:path");
 const fs = require("node:fs");
@@ -397,7 +396,6 @@ exports.updateBotPrefix = (newPrefix) => {
 
 const fsPromises = require("fs").promises;
 
-// --- FUNÇÃO ASSÍNCRONA PARA ALTERAR O PREFIXO ---
 exports.updateBotPrefixAsync = async (newPrefix) => {
   const settingsPath = path.resolve(__dirname, "..", "settings.json");
   const settingsRaw = await fsPromises.readFile(settingsPath, "utf8");
@@ -415,27 +413,46 @@ exports.updateBotPrefixAsync = async (newPrefix) => {
   return { oldPrefix, newPrefix, changed: true };
 };
 
-// --- FUNÇÕES DO SISTEMA DE ADVERTÊNCIAS ---
+const RANKING_DATABASE_FILE = "ranking";
 
+exports.readRanking = () => {
+  return readJSON(RANKING_DATABASE_FILE, {});
+};
+
+exports.saveRanking = (data) => {
+  writeJSON(RANKING_DATABASE_FILE, data, {});
+};
+
+exports.incrementUserMessageCount = (groupId, userId) => {
+  const db = exports.readRanking();
+
+  if (!db[groupId]) {
+    db[groupId] = {};
+  }
+
+  if (!db[groupId][userId]) {
+    db[groupId][userId] = 1;
+  } else {
+    db[groupId][userId]++;
+  }
+
+  exports.saveRanking(db);
+};
 const WARNS_DATABASE_FILE = "warns";
 
-// Lê o banco de dados de advertências
 exports.readWarns = () => {
   return readJSON(WARNS_DATABASE_FILE, {});
 };
 
-// Salva o banco de dados de advertências
 exports.saveWarns = (data) => {
   writeJSON(WARNS_DATABASE_FILE, data, {});
 };
 
-// Pega as advertências de um usuário específico
 exports.getWarns = (userJid) => {
   const db = exports.readWarns();
-  return db[userJid] || []; // Retorna uma lista vazia se o usuário não tiver warns
+  return db[userJid] || [];
 };
 
-// Adiciona uma nova advertência a um usuário
 exports.addWarn = (userJid, reason) => {
   const db = exports.readWarns();
   if (!db[userJid]) {
@@ -443,14 +460,156 @@ exports.addWarn = (userJid, reason) => {
   }
   db[userJid].push({ reason, date: new Date().toISOString() });
   exports.saveWarns(db);
-  return db[userJid]; // Retorna a lista atualizada de advertências
+  return db[userJid];
 };
 
-// Limpa todas as advertências de um usuário
 exports.clearWarns = (userJid) => {
   const db = exports.readWarns();
   if (db[userJid]) {
     delete db[userJid];
     exports.saveWarns(db);
   }
+};
+
+// --- FUNÇÕES DA LISTA NEGRA ---
+const BLACKLIST_FILE = "blacklist";
+
+exports.readBlacklist = () => {
+  // Força a leitura a sempre esperar um objeto (fichário)
+  const data = readJSON(BLACKLIST_FILE, {});
+  // Se por algum motivo o arquivo antigo for uma lista, trata como um objeto vazio
+  if (Array.isArray(data)) {
+    return {};
+  }
+  return data;
+};
+
+exports.saveBlacklist = (data) => {
+  writeJSON(BLACKLIST_FILE, data, {});
+};
+
+exports.addToBlacklist = (groupId, userJid) => {
+  const db = exports.readBlacklist();
+  if (!db[groupId]) {
+    db[groupId] = [];
+  }
+  if (!exports.isBlacklisted(groupId, userJid)) {
+    db[groupId].push(userJid);
+    exports.saveBlacklist(db);
+  }
+};
+
+exports.removeFromBlacklist = (groupId, userJid) => {
+  const db = exports.readBlacklist();
+  if (!db[groupId]) return;
+  const userToCompare = userJid.split('@')[0].replace(/\D/g, '');
+  db[groupId] = db[groupId].filter(jid => {
+    if (!jid) return false;
+    return jid.split('@')[0].replace(/\D/g, '') !== userToCompare;
+  });
+  exports.saveBlacklist(db);
+};
+
+exports.isBlacklisted = (groupId, userJid) => {
+  if (!userJid || !groupId) return false;
+  const db = exports.readBlacklist();
+  const groupBlacklist = db[groupId] || [];
+  const userToCompare = userJid.split('@')[0].replace(/\D/g, '');
+  return groupBlacklist.some(blacklistedJid => {
+    if (!blacklistedJid) return false;
+    const blacklistedUser = blacklistedJid.split('@')[0].replace(/\D/g, '');
+    return blacklistedUser === userToCompare;
+  });
+};
+
+// --- FUNÇÕES PARA ALTERAR NOMES ---
+
+// Altera o nome do Bot
+exports.updateBotName = (newName) => {
+  const settingsPath = path.resolve(__dirname, "..", "settings.json");
+  const settingsRaw = fs.readFileSync(settingsPath, "utf8");
+  const settings = JSON.parse(settingsRaw);
+
+  const oldName = settings.bot.name;
+  settings.bot.name = newName;
+
+  fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2), "utf8");
+  return { oldName, newName };
+};
+
+// Altera o nome do Dono
+exports.updateOwnerName = (newName) => {
+  const settingsPath = path.resolve(__dirname, "..", "settings.json");
+  const settingsRaw = fs.readFileSync(settingsPath, "utf8");
+  const settings = JSON.parse(settingsRaw);
+
+  const oldName = settings.owner.name;
+  settings.owner.name = newName;
+
+  fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2), "utf8");
+  return { oldName, newName };
+};
+
+// --- FUNÇÕES DO SISTEMA ANTI-FAKE ---
+exports.activateAntiFake = (remoteJid) => {
+  const db = exports.readGroupRestrictions();
+  if (!db[remoteJid]) db[remoteJid] = {};
+  db[remoteJid]["antifake"] = true;
+  exports.saveGroupRestrictions(db);
+};
+
+exports.deactivateAntiFake = (remoteJid) => {
+  const db = exports.readGroupRestrictions();
+  if (!db[remoteJid]) return;
+  db[remoteJid]["antifake"] = false;
+  exports.saveGroupRestrictions(db);
+};
+
+exports.isActiveAntiFake = (remoteJid) => {
+  const db = exports.readGroupRestrictions();
+  return !!db[remoteJid]?.["antifake"];
+};
+
+// --- FUNÇÕES DE VISUALIZAÇÃO AUTOMÁTICA DE MSGNS ---
+const SPY_SETTINGS_FILE = "spy-settings";
+
+// Lê as configurações do modo espião
+exports.readSpySettings = () => {
+  // O padrão é um objeto com a função desativada
+  return readJSON(SPY_SETTINGS_FILE, { enabled: false });
+};
+
+// Salva as configurações
+exports.saveSpySettings = (data) => {
+  writeJSON(SPY_SETTINGS_FILE, data, { enabled: false });
+};
+
+// Ativa o modo espião
+exports.activateSpyMode = () => {
+  exports.saveSpySettings({ enabled: true });
+};
+
+// Desativa o modo espião
+exports.deactivateSpyMode = () => {
+  exports.saveSpySettings({ enabled: false });
+};
+
+// Verifica se o modo espião está ativo
+exports.isSpyModeActive = () => {
+  const settings = exports.readSpySettings();
+  return settings.enabled;
+};
+
+// --- FUNÇÕES DE SEGURANÇA (ANTIPV, ANTICALL) ---
+const SECURITY_SETTINGS_FILE = "security-settings";
+
+// Lê as configurações de segurança
+exports.readSecuritySettings = () => {
+  // O padrão é um objeto com tudo desativado
+  return readJSON(SECURITY_SETTINGS_FILE, { antiPv: false, antiPvHard: false, antiCall: false });
+};
+
+// Salva as configurações de segurança
+exports.saveSecuritySettings = (data) => {
+  writeJSON(SECURITY_SETTINGS_FILE, data);
 };

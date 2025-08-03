@@ -55,6 +55,6 @@ module.exports = {
 
     const status = antiImageOn ? "ativado" : "desativado";
 
-    await sendSuccessReply(`Anti-image ${status} com sucesso!`);
+    await sendSuccessReply(`✔️ Sistema Anti-Image ${status} com sucesso.`);
   },
 };

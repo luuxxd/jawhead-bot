@@ -55,6 +55,6 @@ module.exports = {
 
     const status = antiDocumentOn ? "ativado" : "desativado";
 
-    await sendSuccessReply(`Anti-document ${status} com sucesso!`);
+    await sendSuccessReply(`✔️ Sistema Anti-Document ${status} com sucesso.`);
   },
 };

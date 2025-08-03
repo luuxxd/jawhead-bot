@@ -6,13 +6,13 @@ module.exports = {
   name: "rebaixar",
   description: "Rebaixa um administrador para membro comum",
   commands: ["rebaixar", "rebaixa", "demote"],
-  usage: `${PREFIX}rebaixar @usuario`,
+  usage: `${PREFIX}rebaixar @usuario ou respondendo a uma mensagem`,
   /**
    * @param {CommandHandleProps} props
    * @returns {Promise<void>}
    */
   handle: async ({
-    args,
+    webMessage,
     remoteJid,
     socket,
     sendWarningReply,
@@ -23,21 +23,23 @@ module.exports = {
       return sendWarningReply("Este comando só pode ser usado em grupo !");
     }
 
-    if (!args.length || !args[0]) {
-      return sendWarningReply(
-        "Por favor, marque um administrador para rebaixar."
-      );
+    const contextInfo = webMessage.message?.extendedTextMessage?.contextInfo;
+    const targetJid = contextInfo?.mentionedJid?.[0] || contextInfo?.participant;
+
+    if (!targetJid) {
+      return sendWarningReply("Por favor, marque um administrador ou responda a uma mensagem para rebaixar.");
     }
 
-    const userId = args[0].replace("@", "") + "@s.whatsapp.net";
-
     try {
-      await socket.groupParticipantsUpdate(remoteJid, [userId], "demote");
-      await sendSuccessReply("Usuário rebaixado com sucesso!");
+      await socket.groupParticipantsUpdate(remoteJid, [targetJid], "demote");
+
+      const targetName = `@${targetJid.split('@')[0]}`;
+      await socket.sendMessage(remoteJid, { text: `✔️ ${targetName} betinha rebaixado(a) para membro comum.`, mentions: [targetJid] });
+
     } catch (error) {
       errorLog(`Erro ao rebaixar administrador: ${error.message}`);
       await sendErrorReply(
-        "Ocorreu um erro ao tentar rebaixar o usuário. Eu preciso ser administrador do grupo para rebaixar outros administradores!"
+        "Para realizar este comando eu preciso ser administrador."
       );
     }
   },

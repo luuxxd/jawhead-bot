@@ -52,7 +52,7 @@ module.exports = {
     const context = exit ? "ativado" : "desativado";
 
     await sendReply(
-      `Recurso de envio de mensagem de saída ${context} com sucesso!`
+      `✔️ Recurso de envio de mensagem de saída ${context} com sucesso.`
     );
   },
 };

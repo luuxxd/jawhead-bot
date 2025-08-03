@@ -1,127 +1,162 @@
-const { bot: { name: BOT_NAME, prefix: PREFIX } } = require("./settings.json");
-const packageInfo = require("../package.json");
-const { readMore } = require("./utils");
+const { bot: { prefix: PREFIX } } = require("./settings.json");
 
-exports.menuMessage = (user) => {
-  const date = new Date();
+// --- CATÁLOGO DE MENUS DO JAWHEAD BOT ---
 
-  return `
-Fala *${user.name}*, bem-vindo(a) 🫵🦍
-
+exports.mainMenu = (user) => {
+  return `〆 *MENU DE COMANDOS DO JAWHEAD* 〆\n
+Fala @${user.jid.split('@')[0]} 🫵🦍\n
+<> Se quiser mais informações sobre algum comando, use ${PREFIX}info [comando] <>\n
+————————————————————————————————————————————————\n
+➲ *PRINCIPAL*\n
+〆 ${PREFIX}menuadm - Menu de Adms
+〆 ${PREFIX}menudono - Menu do Dono
+〆 ${PREFIX}menugold - *Em breve...*
+〆 ${PREFIX}suporte - Informações gerais do bot\n
+————————————————————————————————————————————————\n
+➲ *FIGURINHAS*\n
+〆 ${PREFIX}sticker - Converte imagem em figurinha
+〆 ${PREFIX}attp [texto] - Figurinha de texto animada
+〆 ${PREFIX}ttp [texto] - Figurinha de texto estática
+〆 ${PREFIX}emojimix [😀/❤️] - Converte emojis em figurinha >NOVO<
+〆 ${PREFIX}toimg - Converte figurinha em imagem\n
+————————————————————————————————————————————————\n
+➲ *DOWNLOADS*\n
+〆 ${PREFIX}play [música/link] - Baixa áudio do YouTube
+〆 ${PREFIX}play-video [nome/link] - Baixa vídeo do YouTube
+〆 ${PREFIX}tik-tok [link] - Baixa vídeo do TikTok
+〆 ${PREFIX}insta [link] - Baixa mídia do Instagram
+〆 ${PREFIX}yt-mp3 [link] - Converte vídeos do YouTube para MP3
+〆 ${PREFIX}yt-mp4 [link] - Converte vídeos do YouTube para MP4\n
+————————————————————————————————————————————————\n
+➲ *BRINCADEIRAS*\n
+〆 ${PREFIX}jogodavelha iniciar (@adversário)
+〆 ${PREFIX}chance [texto]
+〆 ${PREFIX}abracar [@usuário]
+〆 ${PREFIX}beijar
+〆 ${PREFIX}dado
+〆 ${PREFIX}jantar
+〆 ${PREFIX}lutar
+〆 ${PREFIX}matar
+〆 ${PREFIX}socar\n
+————————————————————————————————————————————————\n
+➲ *PESQUISAS & CONSULTAS*\n
+〆 ${PREFIX}googlesearch [texto] - Pesquisa no Google
+〆 ${PREFIX}ytsearch [texto] - Pesquisa no YouTube
+〆 ${PREFIX}cep [00000-000] - Consulta de CEP
+〆 ${PREFIX}animes - Animes populares do momento
+〆 ${PREFIX}wiki [texto] - Pesquisa no Wikipédia
+〆 ${PREFIX}img - Pesquisa imagens do Google
+〆 ${PREFIX}clima [cidade]
+〆 ${PREFIX}letra [artista - música] - Letra da música pesquisada
+〆 ${PREFIX}ping - Exibe o ping do bot
+〆 ${PREFIX}hentai - Imagens salientes
+〆 ${PREFIX}ddd [00] - Exibe informações do DDD
+〆 ${PREFIX}encurtar - Encurtador de links\n
+————————————————————————————————————————————————\n
+➲ *COMANDOS GERAIS*\n
+〆 ${PREFIX}fake-chat [@usuário|texto citado|mensagem que será enviada] - Cria um chat falso
+〆 ${PREFIX}rank - Os 10 usuários mais ativos do grupo
+〆 ${PREFIX}gerar-link [marque] - Gera link da imagem
+〆 ${PREFIX}get-lid [@usuário] - Mostra o JID e LID do usuário
+〆 ${PREFIX}perfil - Exibe seu perfil de usuário
+〆 ${PREFIX}revelar - Revela mídia com visu única
+〆 ${PREFIX}adms - Lista os admins do grupo
+〆 ${PREFIX}exemplos-de-mensagens - Comandos especiais
+〆 ${PREFIX}raw-message [responda] - Exibe estrutura e dados da mensagem em JSON\n
+————————————————————————————————————————————————\n
+➲ *INTELIGÊNCIA ARTIFICIAL*\n
+〆 ${PREFIX}gemini [assunto] - Chat com o Gemini
+〆 ${PREFIX}ia-sticker [descrição] - Figurinha gerada por IA
+〆 ${PREFIX}pixart [descrição] - Imagem gerada por IA
+〆 ${PREFIX}stable-diffusion-turbo [descrição] - Imagem gerada por IA\n
+————————————————————————————————————————————————\n
+➲ *EFEITOS CANVA*\n
+〆 ${PREFIX}blur [marque uma imagem] - Efeito de desfoque
+〆 ${PREFIX}bolsonaro - Feature do Bolsonaro gerada por IA
+〆 ${PREFIX}lula - Feature do Lula gerada por IA
+〆 ${PREFIX}cadeia - Feature de cadeia
+〆 ${PREFIX}contraste - Efeito de contraste
+〆 ${PREFIX}espelhar - Efeito espelhado
+〆 ${PREFIX}gray - Efeito preto e branco
+〆 ${PREFIX}inverter - Efeito negativo
+〆 ${PREFIX}pixel - Efeito pixelado
 ————————————————————————————————————————————————
+Jawhead 🦍`;
+};
 
- 〆 *MENU DE COMANDOS DO JAWHEAD* 〆 
+exports.ownerMenu = (user) => {
+  return `*MENU DO DONO*\n
+Fala @${user.jid.split('@')[0]} 🫵🦍\n
+<> Se quiser mais informações sobre algum comando, use ${PREFIX}info [comando] <>\n
+————————————————————————————————————————————————\n
+〆 ${PREFIX}off - Desativa comandos do bot no grupo
+〆 ${PREFIX}on - Ativa comandos do bot no grupo
+〆 ${PREFIX}reinicie - Reinicia o bot
+〆 ${PREFIX}setmenuimage [marque uma imagem] - Altera a imagem do menu do bot
+〆 ${PREFIX}nickdono [seu nome] - Adiciona/Altera o nome do dono no bot
+〆 ${PREFIX}setnamebot [nome] - Altera o nome do bot
+〆 ${PREFIX}setprefix [novo prefixo]
+〆 ${PREFIX}espiar (1/0) - Ativa a visualização automática de mensagens
+〆 ${PREFIX}getid - Exibe o ID do grupo
+〆 ${PREFIX}antipv - Impede comandos no pv e envia apenas um aviso
+〆 ${PREFIX}antipvhard - Bloqueia automaticamente comandos no pv
+〆 ${PREFIX}anticall - Bloqueia ligações para o bot\n
+————————————————————————————————————————————————`;
+};
 
-————————————————————————————————————————————————
+exports.adminMenu = (user) => {
+  return `*MENU DE ADMS*\n
+Fala @${user.jid.split('@')[0]} 🫵🦍\n
+<> Se quiser mais informações sobre algum comando, use ${PREFIX}info [comando] <>\n
+————————————————————————————————————————————————\n
+*Ativações para o Grupo*\n
+〆 ${PREFIX}antiaudio [1/0] - Apaga o envio de áudio
+〆 ${PREFIX}antidocument [1/0] - Apaga o envio de documento
+〆 ${PREFIX}antievent [1/0] - Apaga o envio de evento
+〆 ${PREFIX}antiimage [1/0] - Apaga o envio de imagem
+〆 ${PREFIX}antilinkgp [1/0] - Remove membro ao mandar link de grupo
+〆 ${PREFIX}antilink [1/0] - Remove membro ao mandar qualquer link
+〆 ${PREFIX}antiproduct [1/0] - Apaga o envio de produto
+〆 ${PREFIX}antisticker [1/0] - Apaga o envio de figurinha
+〆 ${PREFIX}antivideo [1/0] - Apaga o envio de vídeo
+〆 ${PREFIX}autoresponder [1/0] - Ativa auto-resposta no bot
+〆 ${PREFIX}antifake [1/0] - Remove a entrada de números estrangeiros
+〆 ${PREFIX}only-admin [1/0] - Apenas adms podem usar comandos
+〆 ${PREFIX}welcome [1/0] - Mensagem de boas-vindas
+〆 ${PREFIX}exit [1/0] - Mensagem pós-saída de membro\n
+————————————————————————————————————————————————\n
+*Gerenciamento do Grupo*\n
+〆 ${PREFIX}ban [responda/@usuário] - Remove membro do grupo
+〆 ${PREFIX}delete [reponda] - Apaga a mensagem
+〆 ${PREFIX}mute [responda/@usuário] - Muta membro
+〆 ${PREFIX}unmute [responda/@usuário] - Desmuta membro
+〆 ${PREFIX}promover [responda/@usuário] - Promove membro para admin
+〆 ${PREFIX}rebaixar [responda/@usuário] - Rebaixa admin para membro comum
+〆 ${PREFIX}adv [responda/@usuário] - Adverte membro
+〆 ${PREFIX}adv limpar - Remove todas as advertências
+〆 ${PREFIX}listanegra [+55719386xxxx] - Adiciona número à lista de autoban [não coloque o 9 extra da operadora]
+〆 ${PREFIX}remlista - Remove número da lista de autoban
+————————————————————————————————————————————————\n
+*Configurações Gerais*\n
+〆 ${PREFIX}limpar - Útil após o grupo sofrer ataque de travas
+〆 ${PREFIX}linkgp - Solicita o link do grupo
+〆 ${PREFIX}abrir - Abre o grupo para todos os membros
+〆 ${PREFIX}fechar - Fecha o grupo para todos os membros\n
+————————————————————————————————————————————————\n
+*Marcações/Avisos*\n
+〆 ${PREFIX}marcar (texto) - Marca todos do grupo com mensagem personalizada
+〆 ${PREFIX}hidetag - Marca todos do grupo
+〆 ${PREFIX}inativos - Lista membros com menos de 5 mensagens no grupo
+〆 ${PREFIX}agendar-mensagem [texto|tempo] - Agenda mensagem no tempo estimado
+〆 ${PREFIX}cita - Marcação de texto ou mídia\n
+————————————————————————————————————————————————`;
+};
 
-〆 MENU DONO 〆
-
-☛ ${PREFIX}off - Desativa comandos do bot no grupo
-☛ ${PREFIX}on - Ativa comandos do bot no grupo
-☛ ${PREFIX}reinicie - Reinicia o bot
-☛ ${PREFIX}set-menu-image (marque uma imagem) - Altera a imagem de menu do bot
-☛ ${PREFIX}setprefix (prefixo) - Altera o prefixo do bot
-☛ ${PREFIX}get-id - Mostra ID do grupo
-
-————————————————————————————————————————————————
-
-〆 ADMINS 〆
-
-☛ ${PREFIX}anti-audio (1/0) - Apaga o envio de áudio
-☛ ${PREFIX}anti-document (1/0) - Apaga o envio de documento
-☛ ${PREFIX}anti-event (1/0) - Apaga o envio de evento
-☛ ${PREFIX}anti-image (1/0) - Apaga o envio de imagem
-☛ ${PREFIX}anti-linkgp (1/0) - Remove membro ao mandar link de grupo
-☛ ${PREFIX}anti-link (1/0) - Remove membro ao mandar qualquer link
-☛ ${PREFIX}ban (marque o mencione o @usuário) - Remove membro do grupo
-☛ ${PREFIX}anti-product (1/0) - Apaga o envio de produto/venda
-☛ ${PREFIX}anti-sticker (1/0) - Apaga o envio de figurinha
-☛ ${PREFIX}anti-video (1/0) - Apaga o envio de vídeo
-☛ ${PREFIX}auto-responder (1/0) - Ativa a auto-resposta do bot
-☛ ${PREFIX}delete (marque) - Apaga mensagem
-☛ ${PREFIX}agendar-mensagem (texto/tempo) - Agenda mensagem no tempo estimado [ex.: vou cagar/5m]
-☛ ${PREFIX}abrir - Abre o grupo para todos os membros
-☛ ${PREFIX}fechar - Fecha o grupo para todos os membros
-☛ ${PREFIX}hidetag - Marca todos do grupo
-☛ ${PREFIX}linkgp - Solicita o link do grupo
-☛ ${PREFIX}mute (@usuário) - Muta membro
-☛ ${PREFIX}unmute (@usuário) - Desmuta membro
-☛ ${PREFIX}only-admin (1/0) - Apenas admins podem usar comandos
-☛ ${PREFIX}promover (@usuário) - Promove membro para admin
-☛ ${PREFIX}rebaixar (@usuário) - Rebaixa admin para membro comum
-☛ ${PREFIX}adv - Adverte membro (${PREFIX}adv [limpar] remove advs e ${PREFIX}adv [ver] exibe histórico de advs)
-☛ ${PREFIX}veradvs - Ver número de advertências do membro
-☛ ${PREFIX}revelar - Revela visu única
-☛ ${PREFIX}welcome (1/0) - Ativa as boas-vindas
-☛ ${PREFIX}exit (1/0) - Ativa mensagem após saída de membro
-
-————————————————————————————————————————————————
-
-〆 PRINCIPAL 〆
-
-☛ ${PREFIX}attp (texto) - Cria uma figurinha animada
-☛ ${PREFIX}ttp (texto) - Cria uma figurinha estática
-☛ ${PREFIX}cep (00000-000) - Consulta de CEP
-☛ ${PREFIX}sticker - Converte imagem ou vídeo em figurinha
-☛ ${PREFIX}fake-chat (@usuário/texto citado/mensagem que será enviada) - Cria um chat falso do usuário
-☛ ${PREFIX}gerar-link (marque) - Gera link da imagem
-☛ ${PREFIX}rename (ex.: oi / luxd) - Renomeia figurinha
-☛ ${PREFIX}get-lid (@usuário) - Mostra o JID e LID do usuário
-☛ ${PREFIX}google-search (assunto) - Pesquisa no Google
-☛ ${PREFIX}perfil - Exibe o seu perfil
-☛ ${PREFIX}ping - Mostra o seu ping
-☛ ${PREFIX}exemplos-de-mensagens - Comandos especiais
-☛ ${PREFIX}raw-message (marque) - Exibe estrutura e dados da mensagem em JSON
-☛ ${PREFIX}toimg - Converte figurinha em imagem
-☛ ${PREFIX}yt-search (assunto) - Pesquisa no YouTube
-
-————————————————————————————————————————————————
-
-〆 DOWNLOADS 〆
-
-☛ ${PREFIX}play-audio (nome ou link) - Baixa áudio do YouTube
-☛ ${PREFIX}play-video (nome ou link) - Baixa vídeo do YouTube
-☛ ${PREFIX}tik-tok (link) - Vídeo do TikTok
-☛ ${PREFIX}yt-mp3 (link) - Converte vídeos do YouTube para MP3
-☛ ${PREFIX}yt-mp4 (link) - Converte vídeos do YouTube para MP4
-
-————————————————————————————————————————————————
-
-〆 BRINCADEIRAS 〆
-
-☛ ${PREFIX}jogodavelha iniciar (@adversário)
-☛ ${PREFIX}abracar (@usuário)
-☛ ${PREFIX}beijar (@usuário)
-☛ ${PREFIX}dado (@usuário)
-☛ ${PREFIX}jantar (@usuário)
-☛ ${PREFIX}lutar (@usuário)
-☛ ${PREFIX}matar (@usuário)
-☛ ${PREFIX}socar (@usuário)
-
-————————————————————————————————————————————————
-
-〆 INTELIGÊNCIA ARTIFICIAL 〆
-
-☛ ${PREFIX}gemini (assunto) - Conversa com o Gemini
-☛ ${PREFIX}ia-sticker (descrição) - Figurinha gerada por IA
-☛ ${PREFIX}pixart (descrição) - Imagem gerada por IA
-☛ ${PREFIX}stable-diffusion-turbo (descrição) - Imagem gerada por IA
-
-————————————————————————————————————————————————
-
-〆 CANVAS 〆
-
-☛ ${PREFIX}blur (marque uma imagem) - Adiciona efeito desfoque
-☛ ${PREFIX}bolsonaro (marque uma imagem)
-☛ ${PREFIX}cadeia (marque uma imagem)
-☛ ${PREFIX}contraste (marque uma imagem) - Adiciona efeito contraste
-☛ ${PREFIX}espelhar (marque uma imagem) - Adiciona efeito espelhado
-☛ ${PREFIX}gray (marque uma imagem) - Adiciona efeito preto e branco
-☛ ${PREFIX}inverter (marque uma imagem) - Adiciona efeito negativo
-☛ ${PREFIX}pixel (marque uma imagem) - Adiciona efeito pixelado
-☛ ${PREFIX}rip
-
-————————————————————————————————————————————————
-
-${BOT_NAME}`;
+exports.suporteMenu = (user) => {
+    return `*MENU DE SUPORTE*\n
+Fala @${user.jid.split('@')[0]} 🫵🦍\n
+————————————————————————————————————————————————\n
+〆 ${PREFIX}bot - Exibe informações sobre mim
+〆 ${PREFIX}info [comando] - Mostra detalhes sobre um comando
+〆 ${PREFIX}reportar [problema] - Envia um relatório para o meu dono`;
 };

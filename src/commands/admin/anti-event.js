@@ -24,7 +24,7 @@ module.exports = {
 
     if (!args.length) {
       throw new InvalidParameterError(
-        "Você precisa digitar 1 ou 0 (ligar ou desligar)!"
+        "Você precisa digitar 1 ou 0 (ligar ou desligar)."
       );
     }
 
@@ -33,7 +33,7 @@ module.exports = {
 
     if (!antiEventOn && !antiEventOff) {
       throw new InvalidParameterError(
-        "Você precisa digitar 1 ou 0 (ligar ou desligar)!"
+        "Você precisa digitar 1 ou 0 (ligar ou desligar)."
       );
     }
 
@@ -55,6 +55,6 @@ module.exports = {
 
     const status = antiEventOn ? "ativado" : "desativado";
 
-    await sendSuccessReply(`Anti-event ${status} com sucesso!`);
+    await sendSuccessReply(`✔️ Sistema Anti-Event ${status} com sucesso.`);
   },
 };

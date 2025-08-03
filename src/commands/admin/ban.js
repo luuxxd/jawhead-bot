@@ -1,84 +1,46 @@
 const { OWNER_NUMBER } = require("../../config");
-
 const { PREFIX, BOT_NUMBER } = require(`${BASE_DIR}/config`);
 const { DangerError, InvalidParameterError } = require(`${BASE_DIR}/errors`);
 const { toUserJid, onlyNumbers } = require(`${BASE_DIR}/utils`);
 
 module.exports = {
   name: "ban",
-  description: "Removo um membro do grupo",
+  description: "Remove um membro do grupo.",
   commands: ["ban", "kick"],
-  usage: `${PREFIX}ban @marcar_membro 
-  
-ou 
+  usage: `${PREFIX}ban [@membro | responder]`,
 
-${PREFIX}ban (mencionando uma mensagem)`,
-  /**
-   * @param {CommandHandleProps} props
-   * @returns {Promise<void>}
-   */
   handle: async ({
-    args,
-    isReply,
     socket,
     remoteJid,
-    replyJid,
-    sendReply,
     userJid,
-    isLid,
+    webMessage,
+    sendReply,
     sendSuccessReact,
   }) => {
-    if (!args.length && !isReply) {
-      throw new InvalidParameterError(
-        "Você precisa mencionar ou marcar um membro!"
-      );
+    const contextInfo = webMessage.message?.extendedTextMessage?.contextInfo;
+    const targetJid = contextInfo?.mentionedJid?.[0] || contextInfo?.participant;
+
+    if (!targetJid) {
+      throw new InvalidParameterError("Você precisa mencionar ou responder a um membro!");
     }
 
-    let memberToRemoveId = null;
+    const targetNumber = onlyNumbers(targetJid);
+    if (targetJid === userJid) throw new DangerError("Você não pode remover você mesmo, masoquista.");
+    if (targetNumber === OWNER_NUMBER) throw new DangerError("Você não pode remover o meu dono");
+    if (targetJid === toUserJid(BOT_NUMBER)) throw new DangerError("Você não pode me remover.");
 
-    if (isLid) {
-      const [result] = await socket.onWhatsApp(onlyNumbers(args[0]));
+    try {
 
-      if (!result) {
-        throw new WarningError(
-          "O número informado não está registrado no WhatsApp!"
-        );
-      }
+      await socket.groupParticipantsUpdate(remoteJid, [targetJid], "remove");
+      await sendSuccessReact();
 
-      memberToRemoveId = result.lid;
-    } else {
-      const memberToRemoveJid = isReply ? replyJid : toUserJid(args[0]);
-      const memberToRemoveNumber = onlyNumbers(memberToRemoveJid);
+      const targetName = `@${targetJid.split('@')[0]}`;
+      const finalMessage = `${targetName} tomou no cu com sucesso.`;
+      await socket.sendMessage(remoteJid, { text: finalMessage, mentions: [targetJid] });
 
-      if (memberToRemoveNumber.length < 7 || memberToRemoveNumber.length > 15) {
-        throw new InvalidParameterError("Número inválido!");
-      }
-
-      if (memberToRemoveJid === userJid) {
-        throw new DangerError("Você não pode remover você mesmo!");
-      }
-
-      if (memberToRemoveNumber === OWNER_NUMBER) {
-        throw new DangerError("Você não pode remover o dono do bot!");
-      }
-
-      const botJid = toUserJid(BOT_NUMBER);
-
-      if (memberToRemoveJid === botJid) {
-        throw new DangerError("Você não pode me remover!");
-      }
-
-      memberToRemoveId = memberToRemoveJid;
+    } catch (error) {
+        console.error("Erro ao banir usuário:", error);
+        await sendReply("Para usar este comando eu primeiro preciso ser administrador.");
     }
-
-    await socket.groupParticipantsUpdate(
-      remoteJid,
-      [memberToRemoveId],
-      "remove"
-    );
-
-    await sendSuccessReact();
-
-    await sendReply("Membro removido com sucesso!");
   },
 };

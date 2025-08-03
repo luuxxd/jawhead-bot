@@ -53,6 +53,6 @@ module.exports = {
 
     const context = antiLinkOn ? "ativado" : "desativado";
 
-    await sendReply(`Recurso de anti-link ${context} com sucesso!`);
+    await sendReply(`✔️ Sistema Anti-Link ${context} com sucesso.`);
   },
 };

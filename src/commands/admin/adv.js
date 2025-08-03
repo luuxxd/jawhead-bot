@@ -12,7 +12,7 @@ module.exports = {
     const targetJid = contextInfo?.mentionedJid?.[0] || contextInfo?.participant;
 
     if (!targetJid) {
-      throw new InvalidParameterError("Você precisa marcar um membro ou responder à mensagem de alguém.");
+      throw new InvalidParameterError("Você precisa marcar um membro ou responder a mensagem de alguém.");
     }
 
     const subCommand = args[0];
@@ -40,7 +40,7 @@ module.exports = {
             return socket.sendMessage(remoteJid, { text: replyText, mentions: [targetJid] });
         }
         clearWarns(targetJid);
-        const successText = `✅ Todas as advertências de ${targetName} foram removidas com sucesso.`;
+        const successText = `✔️ Todas as advertências de ${targetName} foram removidas com sucesso.`;
         await socket.sendMessage(remoteJid, { text: successText, mentions: [targetJid] });
         break;
       }
@@ -61,7 +61,7 @@ module.exports = {
         await socket.sendMessage(remoteJid, { text: replyMessage, mentions: [targetJid] });
 
         if (warnCount >= 3) {
-          const banMessage = `🚫 *Limite atingido, removendo o usuário...*`;
+          const banMessage = `☒ *Limite de advs atingido, removendo o usuário...*`;
           await socket.sendMessage(remoteJid, { text: banMessage, mentions: [targetJid] });
           
           setTimeout(() => {

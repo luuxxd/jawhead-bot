@@ -100,7 +100,7 @@ module.exports = {
 
     if (checkIfMemberIsMuted(remoteJid, targetUserJid)) {
       return sendErrorReply(
-        `O usuário @${targetUserNumber} já está silenciado neste grupo.`,
+        `O usuário @${targetUserNumber} já está silenciado no grupo.`,
         [targetUserJid]
       );
     }
@@ -108,7 +108,7 @@ module.exports = {
     muteMember(remoteJid, targetUserJid);
 
     await sendSuccessReply(
-      `@${targetUserNumber} foi mutado com sucesso neste grupo!`,
+      `@${targetUserNumber} foi mutado com sucesso no grupo.`,
       [targetUserJid]
     );
   },

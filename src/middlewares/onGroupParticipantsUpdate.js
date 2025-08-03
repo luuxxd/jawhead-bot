@@ -2,7 +2,6 @@
  * Evento chamado quando um usuário
  * entra ou sai de um grupo de WhatsApp.
  *
- * @author Dev Gui
  */
 const fs = require("node:fs");
 const { getProfileImageData } = require("../services/baileys");

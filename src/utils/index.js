@@ -1,8 +1,3 @@
-/**
- * Funções diversas.
- *
- * @author Dev Gui
- */
 const { downloadContentFromMessage, delay } = require("baileys");
 const { PREFIX, COMMANDS_DIR, TEMP_DIR, ASSETS_DIR } = require("../config");
 const path = require("node:path");
@@ -22,58 +17,29 @@ exports.question = (message) => {
 };
 
 exports.extractDataFromMessage = (webMessage) => {
-  const textMessage = webMessage.message?.conversation;
-  const extendedTextMessage = webMessage.message?.extendedTextMessage;
-  const extendedTextMessageText = extendedTextMessage?.text;
-  const imageTextMessage = webMessage.message?.imageMessage?.caption;
-  const videoTextMessage = webMessage.message?.videoMessage?.caption;
+  const settings = require("../settings.json"); // Lê as configurações mais recentes
+  const textMessage = webMessage.message?.conversation || webMessage.message?.extendedTextMessage?.text || webMessage.message?.imageMessage?.caption || webMessage.message?.videoMessage?.caption || "";
 
-  const fullMessage =
-    textMessage ||
-    extendedTextMessageText ||
-    imageTextMessage ||
-    videoTextMessage;
+  const prefix = textMessage.charAt(0);
+  const configuredPrefix = settings.bot.prefix;
 
-  if (!fullMessage) {
-    return {
-      args: [],
-      commandName: null,
-      fullArgs: null,
-      fullMessage: null,
-      isReply: false,
-      prefix: null,
-      remoteJid: null,
-      replyJid: null,
-      userJid: null,
-    };
-  }
+  const commandName = configuredPrefix === prefix ? textMessage.split(" ")[0].slice(1).toLowerCase() : "";
 
-  const isReply =
-    !!extendedTextMessage && !!extendedTextMessage.contextInfo?.quotedMessage;
+  const args = textMessage.split(" ").slice(1);
+  const fullArgs = args.join(" ");
 
-  const replyJid =
-    !!extendedTextMessage && !!extendedTextMessage.contextInfo?.participant
-      ? extendedTextMessage.contextInfo.participant
-      : null;
-
-  const userJid = webMessage?.key?.participant?.replace(
-    /:[0-9][0-9]|:[0-9]/g,
-    ""
-  );
-
-  const [command, ...args] = fullMessage.split(" ");
-  const prefix = command.charAt(0);
-
-  const commandWithoutPrefix = command.replace(new RegExp(`^[${PREFIX}]+`), "");
+  const isReply = !!webMessage.message?.extendedTextMessage?.contextInfo?.quotedMessage;
+  const replyJid = isReply ? webMessage.message.extendedTextMessage.contextInfo.participant : null;
+  const userJid = webMessage.key?.participant || webMessage.key?.remoteJid;
 
   return {
-    args: this.splitByCharacters(args.join(" "), ["\\", "|", "/"]),
-    commandName: this.formatCommand(commandWithoutPrefix),
-    fullArgs: args.join(" "),
-    fullMessage,
+    args: this.splitByCharacters(fullArgs, ["\\", "|", "/"]),
+    commandName: this.formatCommand(commandName),
+    fullArgs,
+    fullMessage: textMessage,
     isReply,
     prefix,
-    remoteJid: webMessage?.key?.remoteJid,
+    remoteJid: webMessage.key?.remoteJid,
     replyJid,
     userJid,
   };
@@ -394,6 +360,29 @@ exports.compareUserJidWithOtherNumber = ({ userJid, otherNumber }) => {
     userVariations.without9 === ownerVariations.with9 ||
     userVariations.without9 === ownerVariations.without9
   );
+};
+
+// --- FUNÇÃO PARA SAUDAÇÃO DINÂMICA (HORÁRIO DE BRASÍLIA) ---
+exports.getGreeting = () => {
+  const options = {
+    timeZone: 'America/Sao_Paulo', // Define o fuso horário oficial de Brasília
+    hour: 'numeric',
+    hour12: false // Formato de 24h
+  };
+
+  // Pega a data e hora formatada para o fuso de São Paulo e extrai apenas a hora
+  const brasiliaHour = new Date().toLocaleTimeString('pt-BR', options);
+  const hour = parseInt(brasiliaHour);
+
+  if (hour >= 5 && hour < 12) {
+    return "Bom dia";
+  } else if (hour >= 12 && hour < 18) {
+    return "Boa tarde";
+  } else if (hour >= 18 && hour < 24) {
+    return "Boa noite";
+  } else { // Entre 00h e 04h
+    return "Boa madrugada";
+  }
 };
 
 exports.GROUP_PARTICIPANT_ADD = 27;
