@@ -1,7 +1,9 @@
 {
   "bot": {
     "name": "Jawhead 🦍",
-    "prefix": "."
+    "prefix": "!",
+    "stickerPack": "{namebot}",
+    "stickerAuthor": "♛ {user}"
   },
   "owner": {
     "name": "",

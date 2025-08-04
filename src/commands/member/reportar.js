@@ -7,26 +7,41 @@ module.exports = {
   commands: ["reportar", "bug"],
   usage: `.reportar [descrição do problema]`,
 
-  handle: async ({ fullArgs, sendReply, webMessage, socket }) => {
+  handle: async ({ 
+    fullArgs, 
+    sendReply, 
+    webMessage, 
+    socket,
+    isGroup // A "fábrica" já nos diz se é um grupo ou não
+  }) => {
     const reportMessage = fullArgs;
     const ownerJid = `${settings.owner.numbers[0]}@s.whatsapp.net`;
+
+    // Pega o JID do usuário, funcionando em qualquer contexto
+    const userJid = webMessage.key.participant || webMessage.key.remoteJid;
 
     if (!reportMessage) {
       throw new InvalidParameterError("Você precisa descrever o problema que quer reportar.");
     }
-    if (!ownerJid) {
+    if (!ownerJid || !settings.owner.numbers.length) {
         return sendReply("❌ O dono do bot não está configurado. Não posso enviar o relatório.");
     }
 
-    const reportHeader = `*❗ NOVO REPORTE DE BUG ❗*\n\n` +
-                         `*De:* ${webMessage.pushName} (@${webMessage.key.participant.split('@')[0]})\n` +
-                         `*Grupo:* ${(await socket.groupMetadata(webMessage.key.remoteJid)).subject}\n\n` +
-                         `*Mensagem:*`;
+    let reportHeader = `*❗ NOVO REPORTE DE BUG ❗*\n\n` +
+                         `*De:* ${webMessage.pushName} (@${userJid.split('@')[0]})\n`;
 
-    const fullReport = `${reportHeader}\n${reportMessage}`;
+    // Adiciona o nome do grupo apenas se o comando for usado em um
+    if (isGroup) {
+        const groupMetadata = await socket.groupMetadata(webMessage.key.remoteJid);
+        reportHeader += `*Grupo:* ${groupMetadata.subject}\n`;
+    } else {
+        reportHeader += `*Origem:* Chat Privado\n`;
+    }
+
+    const fullReport = `${reportHeader}\n*Mensagem:*\n${reportMessage}`;
 
     // Envia o relatório para o PV do dono
-    await socket.sendMessage(ownerJid, { text: fullReport, mentions: [webMessage.key.participant] });
+    await socket.sendMessage(ownerJid, { text: fullReport, mentions: [userJid] });
 
     await sendReply("✅ Seu relatório foi enviado com sucesso para o meu dono! Obrigado por ajudar a melhorar o bot.");
   },

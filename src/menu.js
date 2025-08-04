@@ -17,14 +17,15 @@ Fala @${user.jid.split('@')[0]} 🫵🦍\n
 〆 ${PREFIX}sticker - Converte imagem em figurinha
 〆 ${PREFIX}attp [texto] - Figurinha de texto animada
 〆 ${PREFIX}ttp [texto] - Figurinha de texto estática
-〆 ${PREFIX}emojimix [😀/❤️] - Converte emojis em figurinha >NOVO<
 〆 ${PREFIX}toimg - Converte figurinha em imagem\n
+〆 ${PREFIX}roubar - "Furta" figurinha de outro usuário para seu pack
 ————————————————————————————————————————————————\n
 ➲ *DOWNLOADS*\n
 〆 ${PREFIX}play [música/link] - Baixa áudio do YouTube
 〆 ${PREFIX}play-video [nome/link] - Baixa vídeo do YouTube
 〆 ${PREFIX}tik-tok [link] - Baixa vídeo do TikTok
 〆 ${PREFIX}insta [link] - Baixa mídia do Instagram
+〆 ${PREFIX}x [link] - Baixa mídia do X/Twitter
 〆 ${PREFIX}yt-mp3 [link] - Converte vídeos do YouTube para MP3
 〆 ${PREFIX}yt-mp4 [link] - Converte vídeos do YouTube para MP4\n
 ————————————————————————————————————————————————\n
@@ -79,7 +80,7 @@ Fala @${user.jid.split('@')[0]} 🫵🦍\n
 〆 ${PREFIX}espelhar - Efeito espelhado
 〆 ${PREFIX}gray - Efeito preto e branco
 〆 ${PREFIX}inverter - Efeito negativo
-〆 ${PREFIX}pixel - Efeito pixelado
+〆 ${PREFIX}pixel - Efeito pixelado\n
 ————————————————————————————————————————————————
 Jawhead 🦍`;
 };
@@ -135,7 +136,7 @@ Fala @${user.jid.split('@')[0]} 🫵🦍\n
 〆 ${PREFIX}adv [responda/@usuário] - Adverte membro
 〆 ${PREFIX}adv limpar - Remove todas as advertências
 〆 ${PREFIX}listanegra [+55719386xxxx] - Adiciona número à lista de autoban [não coloque o 9 extra da operadora]
-〆 ${PREFIX}remlista - Remove número da lista de autoban
+〆 ${PREFIX}remlista - Remove número da lista de autoban\n
 ————————————————————————————————————————————————\n
 *Configurações Gerais*\n
 〆 ${PREFIX}limpar - Útil após o grupo sofrer ataque de travas
@@ -158,5 +159,6 @@ Fala @${user.jid.split('@')[0]} 🫵🦍\n
 ————————————————————————————————————————————————\n
 〆 ${PREFIX}bot - Exibe informações sobre mim
 〆 ${PREFIX}info [comando] - Mostra detalhes sobre um comando
-〆 ${PREFIX}reportar [problema] - Envia um relatório para o meu dono`;
+〆 ${PREFIX}reportar [problema] - Envia um relatório para o meu dono\n
+————————————————————————————————————————————————`;
 };

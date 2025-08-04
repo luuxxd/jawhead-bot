@@ -40,7 +40,7 @@ module.exports = {
       }
 
       await sendSuccessReact();
-      await sendReply(`✅ *Link encurtado com sucesso!*\n\n*Original:* ${link}\n*Encurtado:* ${shortUrl}`);
+      await sendReply(`✔️ *Link encurtado com sucesso!*\n\n*Original:* ${link}\n*Encurtado:* ${shortUrl}`);
 
     } catch (error) {
         console.error("Erro ao encurtar link:", error);

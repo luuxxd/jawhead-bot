@@ -5,22 +5,35 @@ const path = require('path');
 
 module.exports = {
   name: "revelar",
-  description: "Revela uma mídia de visualização única.",
+  description: "Revela uma mídia de visualização única, preservando a legenda original.",
   commands: ["revelar"],
   usage: `.revelar (respondendo a uma mídia de visu única)`,
 
-  handle: async ({ webMessage, sendReply, sendWaitReact, sendSuccessReact, socket, remoteJid, sendImageFromFile, sendVideoFromFile }) => {
+  handle: async ({ 
+    webMessage, 
+    sendReply, 
+    sendWaitReact, 
+    sendSuccessReact, 
+    socket, 
+    remoteJid, 
+    sendImageFromFile, 
+    sendVideoFromFile 
+  }) => {
     const contextInfo = webMessage.message?.extendedTextMessage?.contextInfo;
     const quotedMsg = contextInfo?.quotedMessage;
 
-    // AQUI ESTÁ A CORREÇÃO FINAL, USANDO O CAMINHO QUE VOCÊ DESCOBRIU
-    const viewOnceMsg = quotedMsg?.viewOnceMessageV2?.message;
+    const viewOnceMsg = quotedMsg?.viewOnceMessageV2?.message || quotedMsg?.viewOnceMessage?.message;
 
     if (!viewOnceMsg) {
       throw new InvalidParameterError("Você precisa responder a uma foto ou vídeo de visualização única para usar este comando.");
     }
 
-    const type = Object.keys(viewOnceMsg)[0]; // imageMessage ou videoMessage
+    const type = Object.keys(viewOnceMsg)[0];
+    const mediaMessage = viewOnceMsg[type];
+
+    if (!mediaMessage) {
+        return sendReply("Não foi possível extrair a mídia da mensagem.");
+    }
 
     await sendWaitReact();
 
@@ -36,10 +49,16 @@ module.exports = {
 
         await sendSuccessReact();
 
+        // --- AQUI ESTÁ A MÁGICA ---
+        // 1. Pega a legenda original da mídia, se existir.
+        const originalCaption = mediaMessage.caption || "";
+        // --- FIM DA MÁGICA ---
+
         if (type === 'imageMessage') {
-            await sendImageFromFile(tempFilePath, "Imagem revelada:", { isReply: true });
+            // 2. Envia a imagem com a legenda original (ou sem legenda, se não houver)
+            await sendImageFromFile(tempFilePath, originalCaption, [], true);
         } else if (type === 'videoMessage') {
-            await sendVideoFromFile(tempFilePath, "Vídeo revelado:", { isReply: true });
+            await sendVideoFromFile(tempFilePath, originalCaption, [], true);
         }
 
     } catch (error) {

@@ -22,6 +22,8 @@
     "node-cache": "^5.1.2",
     "node-webpmux": "^3.2.1",
     "pino": "^9.7.0",
-    "tinyurl": "^1.1.7"
+    "playwright": "^1.54.2",
+    "tinyurl": "^1.1.7",
+    "wa-sticker-formatter": "^4.4.4"
   }
 }
