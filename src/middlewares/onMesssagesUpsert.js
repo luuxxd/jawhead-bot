@@ -30,7 +30,7 @@ exports.onMessagesUpsert = async ({ socket, messages }) => {
                 infoLog(`[Anti-PV Hard] Usuário ${userJid} bloqueado por usar comando no privado.`);
                 return; // Para a execução
             } else if (settings.antiPv) {
-                await socket.sendMessage(userJid, { text: "Olá! Por favor, use meus comandos nos grupos." });
+                await socket.sendMessage(userJid, { text: "O uso de comandos no privado está bloqueado. Por favor, use meus comandos nos grupos." });
                 return; // Para a execução
             }
         }

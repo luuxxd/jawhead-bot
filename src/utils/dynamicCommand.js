@@ -42,7 +42,7 @@ exports.dynamicCommand = async (paramsHandler, startProcess) => {
   if (!command) {
     // ...e a mensagem começar com o prefixo (ou seja, foi uma tentativa de comando)...
     if (prefix === settings.bot.prefix) {
-      await sendReply(`Comando inválido! Para saber os meus comandos use *${settings.bot.prefix}menu*`);
+      await sendReply(`Comando inválido. Para saber os meus comandos use *${settings.bot.prefix}menu*`);
     } 
     else if (isGroup && isActiveAutoResponderGroup(remoteJid)) {
         const response = getAutoResponderResponse(fullMessage);
@@ -57,7 +57,7 @@ exports.dynamicCommand = async (paramsHandler, startProcess) => {
           await command.handle({ ...paramsHandler, type, startProcess });
       } catch (error) {
           errorLog("Erro ao executar comando (dono):", error);
-          await sendErrorReply(`Ocorreu um erro no comando ${command.name}!\n\n*Detalhes*: ${error.message}`);
+          await sendErrorReply(`Ocorreu um erro no comando ${command.name}.\n\n*Detalhes*: ${error.message}`);
       }
       return;
   }
@@ -77,7 +77,7 @@ exports.dynamicCommand = async (paramsHandler, startProcess) => {
     if (isActiveAntiLinkGroup(remoteJid) && isLink(fullMessage)) {
       if (!(await isAdmin({ remoteJid, userJid, socket }))) {
         await socket.groupParticipantsUpdate(remoteJid, [userJid], "remove");
-        await sendReply("Anti-link ativado! Você foi removido por enviar um link!");
+        await sendReply("Beta removido por mandar link de grupo.");
         await socket.sendMessage(remoteJid, { delete: webMessage.key });
         return;
       }

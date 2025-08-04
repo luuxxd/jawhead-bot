@@ -1,1 +1,6 @@
-assets/auth/
+node_modules/
+*.log
+*.save
+.DS_Store
+reset-qr-auth.sh
+.env

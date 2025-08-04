@@ -8,17 +8,22 @@ Fala @${user.jid.split('@')[0]} 🫵🦍\n
 <> Se quiser mais informações sobre algum comando, use ${PREFIX}info [comando] <>\n
 ————————————————————————————————————————————————\n
 ➲ *PRINCIPAL*\n
-〆 ${PREFIX}menuadm - Menu de Adms
-〆 ${PREFIX}menudono - Menu do Dono
+〆 ${PREFIX}menuadm - Menu de adms
+〆 ${PREFIX}menudono - Menu do dono
 〆 ${PREFIX}menugold - *Em breve...*
 〆 ${PREFIX}suporte - Informações gerais do bot\n
 ————————————————————————————————————————————————\n
 ➲ *FIGURINHAS*\n
-〆 ${PREFIX}sticker - Converte imagem em figurinha
+〆 ${PREFIX}sticker - Converte imagem/vídeo em figurinha
 〆 ${PREFIX}attp [texto] - Figurinha de texto animada
 〆 ${PREFIX}ttp [texto] - Figurinha de texto estática
+<<<<<<< HEAD
 〆 ${PREFIX}toimg - Converte figurinha em imagem\n
 〆 ${PREFIX}roubar - "Furta" figurinha de outro usuário para seu pack
+=======
+〆 ${PREFIX}toimg - Converte figurinha em imagem
+〆 ${PREFIX}roubar - Rouba figurinha de outro usuário para seu pack
+>>>>>>> 9c05a321 (Primeiro commit do projeto)
 ————————————————————————————————————————————————\n
 ➲ *DOWNLOADS*\n
 〆 ${PREFIX}play [música/link] - Baixa áudio do YouTube
@@ -26,13 +31,19 @@ Fala @${user.jid.split('@')[0]} 🫵🦍\n
 〆 ${PREFIX}tik-tok [link] - Baixa vídeo do TikTok
 〆 ${PREFIX}insta [link] - Baixa mídia do Instagram
 〆 ${PREFIX}x [link] - Baixa mídia do X/Twitter
+<<<<<<< HEAD
 〆 ${PREFIX}yt-mp3 [link] - Converte vídeos do YouTube para MP3
 〆 ${PREFIX}yt-mp4 [link] - Converte vídeos do YouTube para MP4\n
+=======
+〆 ${PREFIX}yt-mp3 [link] - Baixa vídeo do YouTube em MP3
+〆 ${PREFIX}yt-mp4 [link] - Baixa vídeo do YouTube em MP4\n
+>>>>>>> 9c05a321 (Primeiro commit do projeto)
 ————————————————————————————————————————————————\n
 ➲ *BRINCADEIRAS*\n
 〆 ${PREFIX}jogodavelha iniciar (@adversário)
 〆 ${PREFIX}chance [texto]
 〆 ${PREFIX}abracar [@usuário]
+〆 ${PREFIX}gay
 〆 ${PREFIX}beijar
 〆 ${PREFIX}dado
 〆 ${PREFIX}jantar
@@ -46,7 +57,7 @@ Fala @${user.jid.split('@')[0]} 🫵🦍\n
 〆 ${PREFIX}cep [00000-000] - Consulta de CEP
 〆 ${PREFIX}animes - Animes populares do momento
 〆 ${PREFIX}wiki [texto] - Pesquisa no Wikipédia
-〆 ${PREFIX}img - Pesquisa imagens do Google
+〆 ${PREFIX}img [texto] - Pesquisa imagens no Google
 〆 ${PREFIX}clima [cidade]
 〆 ${PREFIX}letra [artista - música] - Letra da música pesquisada
 〆 ${PREFIX}ping - Exibe o ping do bot
@@ -73,8 +84,6 @@ Fala @${user.jid.split('@')[0]} 🫵🦍\n
 ————————————————————————————————————————————————\n
 ➲ *EFEITOS CANVA*\n
 〆 ${PREFIX}blur [marque uma imagem] - Efeito de desfoque
-〆 ${PREFIX}bolsonaro - Feature do Bolsonaro gerada por IA
-〆 ${PREFIX}lula - Feature do Lula gerada por IA
 〆 ${PREFIX}cadeia - Feature de cadeia
 〆 ${PREFIX}contraste - Efeito de contraste
 〆 ${PREFIX}espelhar - Efeito espelhado
@@ -145,7 +154,7 @@ Fala @${user.jid.split('@')[0]} 🫵🦍\n
 〆 ${PREFIX}fechar - Fecha o grupo para todos os membros\n
 ————————————————————————————————————————————————\n
 *Marcações/Avisos*\n
-〆 ${PREFIX}marcar (texto) - Marca todos do grupo com mensagem personalizada
+〆 ${PREFIX}marcar [texto] - Marca todos do grupo com mensagem personalizada
 〆 ${PREFIX}hidetag - Marca todos do grupo
 〆 ${PREFIX}inativos - Lista membros com menos de 5 mensagens no grupo
 〆 ${PREFIX}agendar-mensagem [texto|tempo] - Agenda mensagem no tempo estimado

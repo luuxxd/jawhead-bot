@@ -24,13 +24,13 @@ exports.messageHandler = async (socket, webMessage) => {
     const configuredPrefix = require("../settings.json").bot.prefix || PREFIX;
 
     if (messageText.trim().toLowerCase() === 'prefixo') {
-        const replyText = `Meu prefixo é > *${configuredPrefix}*`;
+        const replyText = `Meu prefixo é: *${configuredPrefix}*`;
         await socket.sendMessage(remoteJid, { text: replyText }, { quoted: webMessage });
         return true;
     }
 
     if (messageText.trim() === configuredPrefix) {
-      const replyText = `${getGreeting()}, @${userJid.split("@")[0]}!\n\nSe quiser acessar meus comandos, use ${configuredPrefix}menu.`;
+      const replyText = `${getGreeting()}, @${userJid.split("@")[0]}!\n\nSe quiser acessar meus comandos, use *${configuredPrefix}menu*`;
       await socket.sendMessage(remoteJid, { text: replyText, mentions: [userJid] }, { quoted: webMessage });
       return true;
     }

@@ -1,7 +1,11 @@
 {
   "bot": {
     "name": "Jawhead 🦍",
+<<<<<<< HEAD
     "prefix": "!",
+=======
+    "prefix": ".",
+>>>>>>> 9c05a321 (Primeiro commit do projeto)
     "stickerPack": "{namebot}",
     "stickerAuthor": "♛ {user}"
   },
